@@ -31,7 +31,7 @@ export default class AppController {
 
 
         this.isSeeded = localStorage.getItem("dashboardSeeded") === "true";
-        if (!this.isSeeded || this.MUTATION_MODE === "API") {
+        if (!this.isSeeded || this.MUTATION_MODE === "api") {
             Ui.showLoading();
             try {
                 const freshData = await EquipmentService.fetchLists();
