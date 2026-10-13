@@ -1,6 +1,7 @@
 export default class LocalStorageService {
 
     static get(key) {
+
         const cached = localStorage.getItem(key);
         if (!cached) return null;
 
@@ -13,14 +14,19 @@ export default class LocalStorageService {
         }
     }
 
-    static set(key, data) {
-        localStorage.setItem(key, JSON.stringify(data))
+    static set(data) {
+
+        for (const key in data){
+            localStorage.setItem(key, JSON.stringify(data[key]));
+        }
+    
     }
 
     static add(item, key) {
+
         const dataList = this.get(key) || [];
-        dataList.push(item)
-        this.set(key, dataList);
+        dataList.push(item);
+        localStorage.setItem(key, JSON.stringify(dataList));
         return item;
     }
 
@@ -29,14 +35,14 @@ export default class LocalStorageService {
         const dataList = (this.get(key) || []).map(data =>
             data.id === item.id ? item : data
         );
-        this.set(key, dataList);
+        localStorage.setItem(key, JSON.stringify(dataList));
         return item;
 
     }
 
     static delete(itemId, key) {
-        const dataList = (this.get(key) || []).filter(data => data.id !== itemId);
-        this.set(key, dataList);
+        const remainingItems = (this.get(key) || []).filter(data => data.id !== itemId);
+        localStorage.setItem(key, JSON.stringify(remainingItems));
         return itemId;
     }
 }

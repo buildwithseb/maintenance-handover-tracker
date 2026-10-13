@@ -1,8 +1,10 @@
-const MUTATION_MODE = process.env.MUTATION_MODE;
+import AppController from "../controllers/AppController";
+
+
 
 export class GeneralNote {
     constructor(text) {
-        if (MUTATION_MODE === "local") {
+        if (AppController.mode === "demo") {
             
             this.id = crypto.randomUUID() // Local storage id 
         }
@@ -13,7 +15,7 @@ export class GeneralNote {
 
 export class Machinery {
     constructor(name, type, status, remoteCapable, notes = "") {
-        if (MUTATION_MODE === "local") {
+        if (AppController.mode === "demo") {
             this.id = crypto.randomUUID() // Local storage id 
         }
         this.name = name
@@ -26,7 +28,7 @@ export class Machinery {
 
 export class RemoteLevel {
     constructor(location, status, notes = "") {
-        if (MUTATION_MODE === "local") {
+        if (AppController.mode === "demo") {
             this.id = crypto.randomUUID() // Local storage id 
         }
         this.location = location
@@ -37,7 +39,7 @@ export class RemoteLevel {
 
 export class Telehut {
     constructor(name, location, status, notes = "") {
-        if (MUTATION_MODE === "local") {
+        if (AppController.mode === "demo") {
             this.id = crypto.randomUUID() // Local storage id 
         }
         this.name = name

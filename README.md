@@ -132,10 +132,9 @@ The application uses a separate frontend and backend connected through a **REST 
 
 The frontend supports two persistence modes:
 
-- `MUTATION_MODE=local` → uses `localStorage` for local development, testing, and seed data resets
-- `MUTATION_MODE=api` → uses the backend API with MongoDB for persistent storage
+"demo" → loads bundled sample data and saves changes in the browser’s localStorage. It works without the backend and supports resetting the sample data.
 
-This setup makes it easy to develop quickly without depending on the backend, while still supporting the full production stack.
+"api" → loads and saves data through the backend API, using MongoDB for persistent storage. It requires the backend to be running.
 
 <br>
 

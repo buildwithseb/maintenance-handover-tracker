@@ -1,10 +1,11 @@
 import ApiService from "./apiService.js";
 import LocalStorageService from "./localStorageService.js";
+import AppController from "../controllers/AppController";
 
 export default class EquipmentService {
 
     static baseUrl = process.env.API_BASE_URL || "http://localhost:3000";
-    static MUTATION_MODE = process.env.MUTATION_MODE;
+
 
     // -------------GET DATA--------------\\
 
@@ -32,11 +33,6 @@ export default class EquipmentService {
             generalNoteRes.json()
         ])
 
-        LocalStorageService.set("machinery", machineryList);
-        LocalStorageService.set("telehut", telehutList);
-        LocalStorageService.set("remote-level", remoteLevelList);
-        LocalStorageService.set("general-note", generalNoteList);
-
         return {
             machineryList,
             telehutList,
@@ -47,10 +43,10 @@ export default class EquipmentService {
 
 
     static async getAllCache() {
-        const generalNoteList = LocalStorageService.get("general-note") || [];
-        const machineryList = LocalStorageService.get("machinery") || [];
-        const telehutList = LocalStorageService.get("telehut") || [];
-        const remoteLevelList = LocalStorageService.get("remote-level") || [];
+        const generalNoteList = LocalStorageService.get("generalNoteList") || [];
+        const machineryList = LocalStorageService.get("machineryList") || [];
+        const telehutList = LocalStorageService.get("telehutList") || [];
+        const remoteLevelList = LocalStorageService.get("remoteLevelList") || [];
 
         return {
             generalNoteList,
@@ -64,106 +60,104 @@ export default class EquipmentService {
     // -------------GENERAL NOTE--------------\\
 
     static async updateGeneralNote(data, id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.updateGeneralNote(data, id);
-        } else {
-            return LocalStorageService.update(data, "general-note");
         }
+        return LocalStorageService.update(data, "generalNoteList");
+
     }
 
     static async addGeneralNote(data, path) {
-        if (this.MUTATION_MODE === "api") {
-            console.log(this.MUTATION_MODE )
+        if (AppController.mode === "api") {
             return ApiService.postData(data, path);
-        } else {
-            return LocalStorageService.add(data, "general-note");
         }
+        return LocalStorageService.add(data, "generalNoteList");
+
     }
 
     static async deleteGeneralNote(id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.deleteGeneralNote(id);
-        } else {
-            return LocalStorageService.delete(id, "general-note");
         }
+        return LocalStorageService.delete(id, "generalNoteList");
     }
 
 
     // -------------MACHINERY--------------\\
 
     static async updateMachinery(data, id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api" ) {
             return await ApiService.updateMachinery(data, id);
         } else {
-            return LocalStorageService.update(data, "machinery");
+            return LocalStorageService.update(data, "machineryList");
         }
     }
 
     static async addMachinery(data, path) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.postData(data, path);
         } else {
-            return LocalStorageService.add(data, "machinery");
+            return LocalStorageService.add(data, "machineryList");
         }
     }
 
     static async deleteMachinery(id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.deleteMachinery(id);
         } else {
-            return LocalStorageService.delete(id, "machinery");
+            return LocalStorageService.delete(id, "machineryList");
         }
     }
 
     // -------------TELEHUT--------------\\
 
     static async updateTelehut(data, id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.updateTelehut(data, id);
         } else {
-            return LocalStorageService.update(data, "telehut");
+            return LocalStorageService.update(data, "telehutList");
         }
     }
 
     static async addTelehut(data, path) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.postData(data, path);
         } else {
-            return LocalStorageService.add(data, "telehut");
+            return LocalStorageService.add(data, "telehutList");
         }
     }
 
     static async deleteTelehut(id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.deleteTelehut(id);
         } else {
-            return LocalStorageService.delete(id, "telehut");
+            return LocalStorageService.delete(id, "telehutList");
         }
     }
 
     // -------------REMOTE LEVEL--------------\\
 
     static async updateRemoteLevel(data, id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.updateRemoteLevel(data, id);
         } else {
-            return LocalStorageService.update(data, "remote-level");
+            return LocalStorageService.update(data, "remoteLevelList");
         }
     }
 
     static async addRemoteLevel(data, path) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.postData(data, path);
         } else {
-            return LocalStorageService.add(data, "remote-level");
+            return LocalStorageService.add(data, "remoteLevelList");
         }
     }
 
     static async deleteRemoteLevel(id) {
-        if (this.MUTATION_MODE === "api") {
+        if (AppController.mode === "api") {
             return await ApiService.deleteRemoteLevel(id);
         } else {
-            return LocalStorageService.delete(id, "remote-level");
+            return LocalStorageService.delete(id, "remoteLevelList");
         }
     }
 

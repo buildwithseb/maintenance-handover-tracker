@@ -19,6 +19,7 @@ export default class Ui {
     }
 
     static renderGeneralNotes(generalNoteList, generalNoteRootList) {
+          console.log(generalNoteList)
 
         generalNoteRootList.innerHTML = "";
         for (const note of generalNoteList) {

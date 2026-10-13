@@ -2,14 +2,11 @@ import { MACHINERY_STATUS, LEVEL_STATUS, TELEHUT_STATUS } from "../utils/constan
 import Ui from "../views/Ui.js";
 import { GeneralNote, Machinery, Telehut, RemoteLevel } from "../models/entities.js";
 import EquipmentService from "../services/equipmentService.js";
+import LocalStorageService from "../services/localStorageService.js";
+import createDemoData from "../data/demoData.js";
 
 export default class AppController {
-    
-
-    MUTATION_MODE = process.env.MUTATION_MODE;
-
     constructor() {
-        
         this.machineryList = [];
         this.telehutList = [];
         this.remoteLevelList = [];
@@ -20,8 +17,10 @@ export default class AppController {
         this.editMachineryId = null;
         this.editTelehutId = null;
         this.editRemoteLevelId = null;
-
     }
+
+    static mode = "demo";       // "demo" or "api"
+    static demoRole = null;     // "user" or "admin"
 
     async init() {
 
@@ -30,25 +29,40 @@ export default class AppController {
         this.bindEvents();
 
 
-        this.isSeeded = localStorage.getItem("dashboardSeeded") === "true";
-        if (!this.isSeeded || this.MUTATION_MODE === "api") {
+
+        this.isSeeded = localStorage.getItem("dashboardSeeded") === 'true';
+
+        if (AppController.mode === "demo" && !this.isSeeded) {
+            const demoData = createDemoData()
+            this.setLists(demoData);
+            console.log(demoData)
+            LocalStorageService.set(demoData)
+            localStorage.setItem("dashboardSeeded", "true");
+            this.isSeeded = true;
+            this.render();
+            return;
+        }
+
+        if (AppController.mode === "api") {
             Ui.showLoading();
             try {
                 const freshData = await EquipmentService.fetchLists();
                 this.setLists(freshData);
-                localStorage.setItem("dashboardSeeded", "true");
-
             } catch (error) {
                 console.error("Failed to load data:", error);
             } finally {
                 Ui.hideLoading();
             }
+            this.render();
+            return;
+        }
 
-        } else if (this.MUTATION_MODE === "local"){
+        if (AppController.mode === "demo" && this.isSeeded) {
             const cachedData = await EquipmentService.getAllCache();
             this.setLists(cachedData);
+            this.render();
         }
-        this.render();
+
     }
 
 
@@ -78,26 +92,17 @@ export default class AppController {
         const addGeneralNoteBtn = document.querySelector("#general-note button");
         const noteInput = document.querySelector("#general-note input");
 
-        if(this.MUTATION_MODE === "local"){
-
-            console.log("test")
+        if (AppController.mode === "demo") {
             Ui.showButton("reset-data-btn");
         }
 
-        resetDataBtn.addEventListener("click", async () => {
-            localStorage.clear()
-            Ui.showLoading();
-            try {
-                const freshData = await EquipmentService.fetchLists();
-                this.setLists(freshData);
-                localStorage.setItem("dashboardSeeded", "true");
-
-            } catch (error) {
-                console.error("Failed to load data:", error);
-            } finally {
-                Ui.hideLoading();
-            }
-            this.render()
+        resetDataBtn.addEventListener("click", () => {
+            localStorage.clear();
+            const demoData = createDemoData();
+            LocalStorageService.set(demoData);
+            this.setLists(demoData);
+            localStorage.setItem("dashboardSeeded", true);
+            this.render();
         })
 
 
@@ -145,12 +150,12 @@ export default class AppController {
                     this.generalNoteList = this.generalNoteList.map(note => note.id === updatedNote.id ? updatedNote : note);
 
                     this.render();
-                } catch (err) { console.error(err) };
+                } catch (err) { console.error("Failed to update data:",err) };
 
                 noteInput.value = "";
                 this.editGeneralNoteId = null;
                 addGeneralNoteBtn.textContent = "Add note";
-                return
+                return;
             }
 
             try {
@@ -161,7 +166,7 @@ export default class AppController {
 
                 this.render();
 
-            } catch (error) { console.error("Failed to load data:", error) }
+            } catch (error) { console.error("Failed to add data:", error) }
             noteInput.value = "";
         })
 
@@ -185,13 +190,11 @@ export default class AppController {
                     const noteToDelete = this.generalNoteList.find(el => el.id.toString() === li.dataset.id);
                     const deletedId = await EquipmentService.deleteGeneralNote(noteToDelete.id);
                     this.generalNoteList = this.generalNoteList.filter(note => note.id !== deletedId);
-
-                } catch (error) { console.error("Failed to load data:", error) }
+                } catch (error) { console.error("Failed to delete data:", error) }
 
                 this.editGeneralNoteId = null;
                 noteInput.value = "";
                 this.render()
-
             }
         })
     };
@@ -275,6 +278,7 @@ export default class AppController {
 
             if (button.dataset.action === "edit") {
 
+
                 const currentMachinery = this.machineryList.find(el => el.id.toString() === tr.dataset.id);
                 Ui.openForm(addMachineFormElement, openAddMachineFormBtn)
 
@@ -292,6 +296,7 @@ export default class AppController {
             else if (button.dataset.action === "remove") {
                 try {
                     const machineryToDelete = this.machineryList.find(el => el.id.toString() === tr.dataset.id);
+                    // console.log(this.machineryList)
                     const deletedId = await EquipmentService.deleteMachinery(machineryToDelete.id);
                     this.machineryList = this.machineryList.filter(machine => machine.id !== deletedId);
                     this.render();
