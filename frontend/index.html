@@ -19,11 +19,61 @@
             <li data-page="handover">Handover Log</li>
           </ul>
         </nav>
+        <div class="sidebar-footer">
+          <button type="button" class="return-button" id="return-to-welcome">
+            <img
+              class="return-icon"
+              src="./assets/exit-icon.svg"
+              alt="Button to return to Welcome page"
+            />
+            <span>Log out</span>
+          </button>
+        </div>
       </aside>
 
       <main class="main">
+        <!-- WELCOME -->
+
+        <section id="welcome" class="page-section welcome-page active">
+          <!-- <header class="welcome-header">
+            <div class="welcome-auth">
+              <button class="welcome-login-btn" type="button">Log in</button>
+              <button class="welcome-signup-btn" type="button">Sign up</button>
+            </div>
+          </header> -->
+
+          <div class="welcome-content">
+            <img
+              class="welcome-logo"
+              src="./assets/maintenance-logo.webp"
+              alt=""
+            />
+            <p class="welcome-eyebrow">Maintenance Handover Tracker</p>
+            <h1>Welcome</h1>
+            <p class="welcome-copy">
+              Track equipment, share operational notes and prepare a clear
+              handover for the next crew.
+            </p>
+
+            <div class="demo-options">
+              <button id="demo-user-btn" class="demo-option" type="button">
+                <span class="demo-option-title">Explore as a user</span>
+                <span class="demo-option-description">
+                  Try the demo with standard user access.
+                </span>
+              </button>
+
+              <button id="demo-admin-btn" class="demo-option" type="button">
+                <span class="demo-option-title">Explore as an admin</span>
+                <span class="demo-option-description">
+                  Try the demo with admin access.
+                </span>
+              </button>
+            </div>
+          </div>
+        </section>
         <!-- DASHBOARD -->
-        <section id="dashboard" class="page-section active">
+        <section id="dashboard" class="page-section">
           <div class="section-header dashboard-header">
             <div>
               <div id="loading-state" class="loading-card inactive">

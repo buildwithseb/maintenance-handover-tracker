@@ -61,7 +61,6 @@ export default class AppController {
         this.setDomRefs();
         this.bindSideBarEvents();
         this.bindEvents();
-
         this.startDemo(null);
 
     }
@@ -77,11 +76,21 @@ export default class AppController {
     };
 
     bindEvents() {
+        this.bindWelcomeEvents();
         this.bindDashboardEvents();
         this.bindMachineryEvents();
         this.bindTelehutEvents();
         this.bindRemoteLevelEvents();
     };
+
+    bindWelcomeEvents() {
+        const demoUserBtn = document.getElementById('demo-user-btn');
+        const returnBtn = document.getElementById('return-to-welcome');
+        // const demoAdminBtn = document.getElementById('demo-admin-btn');
+
+        demoUserBtn.addEventListener('click', () => Ui.showPage("dashboard"));
+        returnBtn.addEventListener('click', () => Ui.showPage("welcome"));
+    }
 
     bindDashboardEvents() {
 
