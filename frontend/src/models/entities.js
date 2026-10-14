@@ -1,10 +1,8 @@
-import AppController from "../controllers/AppController";
-
-
+import appState from "../state/appState.js";
 
 export class GeneralNote {
     constructor(text) {
-        if (AppController.mode === "demo") {
+        if (appState.mode === "demo") {
             
             this.id = crypto.randomUUID() // Local storage id 
         }
@@ -15,7 +13,7 @@ export class GeneralNote {
 
 export class Machinery {
     constructor(name, type, status, remoteCapable, notes = "") {
-        if (AppController.mode === "demo") {
+        if (appState.mode === "demo") {
             this.id = crypto.randomUUID() // Local storage id 
         }
         this.name = name
@@ -28,7 +26,7 @@ export class Machinery {
 
 export class RemoteLevel {
     constructor(location, status, notes = "") {
-        if (AppController.mode === "demo") {
+        if (appState.mode === "demo") {
             this.id = crypto.randomUUID() // Local storage id 
         }
         this.location = location
@@ -39,7 +37,7 @@ export class RemoteLevel {
 
 export class Telehut {
     constructor(name, location, status, notes = "") {
-        if (AppController.mode === "demo") {
+        if (appState.mode === "demo") {
             this.id = crypto.randomUUID() // Local storage id 
         }
         this.name = name

@@ -4,6 +4,7 @@ import { GeneralNote, Machinery, Telehut, RemoteLevel } from "../models/entities
 import EquipmentService from "../services/equipmentService.js";
 import LocalStorageService from "../services/localStorageService.js";
 import createDemoData from "../data/demoData.js";
+import appState from "../state/appState.js";
 
 export default class AppController {
     constructor() {
@@ -19,9 +20,6 @@ export default class AppController {
         this.editRemoteLevelId = null;
     }
 
-    static mode = "demo";       // "demo" or "api"
-    static demoRole = null;     // "user" or "admin"
-
     async init() {
 
         this.setDomRefs();
@@ -32,7 +30,7 @@ export default class AppController {
 
         this.isSeeded = localStorage.getItem("dashboardSeeded") === 'true';
 
-        if (AppController.mode === "demo" && !this.isSeeded) {
+        if (appState.mode === "demo" && !this.isSeeded) {
             const demoData = createDemoData()
             this.setLists(demoData);
             console.log(demoData)
@@ -43,7 +41,7 @@ export default class AppController {
             return;
         }
 
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             Ui.showLoading();
             try {
                 const freshData = await EquipmentService.fetchLists();
@@ -57,7 +55,7 @@ export default class AppController {
             return;
         }
 
-        if (AppController.mode === "demo" && this.isSeeded) {
+        if (appState.mode === "demo" && this.isSeeded) {
             const cachedData = await EquipmentService.getAllCache();
             this.setLists(cachedData);
             this.render();
@@ -92,7 +90,7 @@ export default class AppController {
         const addGeneralNoteBtn = document.querySelector("#general-note button");
         const noteInput = document.querySelector("#general-note input");
 
-        if (AppController.mode === "demo") {
+        if (appState.mode === "demo") {
             Ui.showButton("reset-data-btn");
         }
 

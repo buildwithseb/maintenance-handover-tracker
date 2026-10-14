@@ -1,6 +1,6 @@
 import ApiService from "./apiService.js";
 import LocalStorageService from "./localStorageService.js";
-import AppController from "../controllers/AppController";
+import appState from "../state/appState.js";
 
 export default class EquipmentService {
 
@@ -60,7 +60,7 @@ export default class EquipmentService {
     // -------------GENERAL NOTE--------------\\
 
     static async updateGeneralNote(data, id) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.updateGeneralNote(data, id);
         }
         return LocalStorageService.update(data, "generalNoteList");
@@ -68,7 +68,7 @@ export default class EquipmentService {
     }
 
     static async addGeneralNote(data, path) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return ApiService.postData(data, path);
         }
         return LocalStorageService.add(data, "generalNoteList");
@@ -76,7 +76,7 @@ export default class EquipmentService {
     }
 
     static async deleteGeneralNote(id) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.deleteGeneralNote(id);
         }
         return LocalStorageService.delete(id, "generalNoteList");
@@ -86,7 +86,7 @@ export default class EquipmentService {
     // -------------MACHINERY--------------\\
 
     static async updateMachinery(data, id) {
-        if (AppController.mode === "api" ) {
+        if (appState.mode === "api" ) {
             return await ApiService.updateMachinery(data, id);
         } else {
             return LocalStorageService.update(data, "machineryList");
@@ -94,7 +94,7 @@ export default class EquipmentService {
     }
 
     static async addMachinery(data, path) {
-        if (AppController.mode === "api") {
+        if (appState.mode=== "api") {
             return await ApiService.postData(data, path);
         } else {
             return LocalStorageService.add(data, "machineryList");
@@ -102,7 +102,7 @@ export default class EquipmentService {
     }
 
     static async deleteMachinery(id) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.deleteMachinery(id);
         } else {
             return LocalStorageService.delete(id, "machineryList");
@@ -112,7 +112,7 @@ export default class EquipmentService {
     // -------------TELEHUT--------------\\
 
     static async updateTelehut(data, id) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.updateTelehut(data, id);
         } else {
             return LocalStorageService.update(data, "telehutList");
@@ -120,7 +120,7 @@ export default class EquipmentService {
     }
 
     static async addTelehut(data, path) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.postData(data, path);
         } else {
             return LocalStorageService.add(data, "telehutList");
@@ -128,7 +128,7 @@ export default class EquipmentService {
     }
 
     static async deleteTelehut(id) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.deleteTelehut(id);
         } else {
             return LocalStorageService.delete(id, "telehutList");
@@ -138,7 +138,7 @@ export default class EquipmentService {
     // -------------REMOTE LEVEL--------------\\
 
     static async updateRemoteLevel(data, id) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.updateRemoteLevel(data, id);
         } else {
             return LocalStorageService.update(data, "remoteLevelList");
@@ -146,7 +146,7 @@ export default class EquipmentService {
     }
 
     static async addRemoteLevel(data, path) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.postData(data, path);
         } else {
             return LocalStorageService.add(data, "remoteLevelList");
@@ -154,7 +154,7 @@ export default class EquipmentService {
     }
 
     static async deleteRemoteLevel(id) {
-        if (AppController.mode === "api") {
+        if (appState.mode === "api") {
             return await ApiService.deleteRemoteLevel(id);
         } else {
             return LocalStorageService.delete(id, "remoteLevelList");
