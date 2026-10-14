@@ -20,27 +20,27 @@ export default class AppController {
         this.editRemoteLevelId = null;
     }
 
-    async init() {
-
-        this.setDomRefs();
-        this.bindSideBarEvents();
-        this.bindEvents();
-
-
+    async startDemo(role) {
 
         this.isSeeded = localStorage.getItem("dashboardSeeded") === 'true';
 
         if (appState.mode === "demo" && !this.isSeeded) {
             const demoData = createDemoData()
             this.setLists(demoData);
-            console.log(demoData)
             LocalStorageService.set(demoData)
             localStorage.setItem("dashboardSeeded", "true");
             this.isSeeded = true;
             this.render();
             return;
         }
+        if (appState.mode === "demo" && this.isSeeded) {
+            const cachedData = await EquipmentService.getAllCache();
+            this.setLists(cachedData);
+            this.render();
+        }
+    }
 
+    async startAuthenticatedSession() {
         if (appState.mode === "api") {
             Ui.showLoading();
             try {
@@ -54,12 +54,15 @@ export default class AppController {
             this.render();
             return;
         }
+    }
 
-        if (appState.mode === "demo" && this.isSeeded) {
-            const cachedData = await EquipmentService.getAllCache();
-            this.setLists(cachedData);
-            this.render();
-        }
+    async init() {
+
+        this.setDomRefs();
+        this.bindSideBarEvents();
+        this.bindEvents();
+
+        this.startDemo(null);
 
     }
 
@@ -148,7 +151,7 @@ export default class AppController {
                     this.generalNoteList = this.generalNoteList.map(note => note.id === updatedNote.id ? updatedNote : note);
 
                     this.render();
-                } catch (err) { console.error("Failed to update data:",err) };
+                } catch (err) { console.error("Failed to update data:", err) };
 
                 noteInput.value = "";
                 this.editGeneralNoteId = null;
