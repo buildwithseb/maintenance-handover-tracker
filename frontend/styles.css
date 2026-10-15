@@ -12,9 +12,9 @@
     --muted: #6b7280;
     --border: #d6dde5;
     --border-soft: #e5e7eb;
-    --sidebar: #1f2937;
+    --sidebar: #0B2442;
     --sidebar-hover: #374151;
-    --primary: #2563eb;
+    --primary: #1D7DF2;
     --primary-hover: #1d4ed8;
     --danger: #dc2626;
     --danger-hover: #b91c1c;
@@ -210,68 +210,45 @@ body:has(#welcome.active) .main {
     min-height: 100vh;
     margin: 0;
     padding: 28px clamp(20px, 6vw, 80px);
-    background:
-        radial-gradient(ellipse at 50% 35%, #fff 0%, #f4f6f8 72%);
+    background: radial-gradient(
+        ellipse at 50% 35%,
+        #fff 0%,
+        #f4f6f8 72%
+    );
 }
 
-.welcome-content .welcome-logo {
-    display: block;
-    width: 110px;
-    max-width: 100%;
-    height: auto;
-    margin: 0 auto 24px;
-    object-fit: contain;
-}
-
-/* .welcome-header {
+/* Header and authentication */
+.welcome-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-}
-
-.welcome-brand-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.welcome-logo {
-    display: block;
-    width: auto;
-    height: 74px;
-    object-fit: contain;
-}
-
-.welcome-brand {
-    margin: 0;
-    font: inherit;
-    font-weight: 600;
-    font-size: 18px;
-
 }
 
 .welcome-auth {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: auto;
 }
 
 .welcome-login-btn,
 .welcome-signup-btn {
-    padding: 10px 16px;
+    min-height: 44px;
+    padding: 7px 14px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    background: white;
+    background: #fff;
     color: var(--text);
     font: inherit;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 400;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .welcome-signup-btn {
     border-color: var(--primary);
     background: var(--primary);
-    color: white;
+    color: #fff;
 }
 
 .welcome-login-btn:hover {
@@ -280,12 +257,21 @@ body:has(#welcome.active) .main {
 
 .welcome-signup-btn:hover {
     background: var(--primary-hover);
-} */
+}
 
+/* Main content */
 .welcome-content {
     width: min(100%, 760px);
-    margin: clamp(72px, 14vh, 140px) auto 60px;
+    margin: clamp(40px, 8vh, 80px) auto 60px;
     text-align: center;
+}
+
+.welcome-content .welcome-logo {
+    display: block;
+    width: 110px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto 24px;
 }
 
 .welcome-eyebrow {
@@ -305,34 +291,51 @@ body:has(#welcome.active) .main {
 
 .welcome-copy {
     max-width: 600px;
-    margin: 0 auto 36px;
+    margin: 0 auto 16px;
     color: var(--muted);
     font-size: 1.1rem;
     line-height: 1.7;
 }
 
+/* Implementation cards */
 .demo-options {
+    --card-gap: 16px;
+    --connector-color: #94a3b8;
+
+    position: relative;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    text-align: left;
+    gap: var(--card-gap);
+    max-width: 460px;
+    margin: 0 auto;
+    padding-top: 48px;
 }
 
 .demo-option {
     display: flex;
-    min-height: 150px;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 24px;
+    min-width: 0;
+    min-height: 280px;
+    padding: 20px;
     border: 1px solid #bfdbfe;
     border-radius: 14px;
     background: #eaf2ff;
     color: var(--text);
     font: inherit;
+    text-align: center;
     cursor: pointer;
     box-shadow: var(--shadow);
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.demo-option-admin {
+    background: #eef2ff;
+    border-color: #c7d2fe;
 }
 
 .demo-option:hover {
@@ -340,13 +343,18 @@ body:has(#welcome.active) .main {
     box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
 }
 
-.demo-option-admin {
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
+.demo-option-icon {
+    display: block;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin-bottom: 10px;
+    object-fit: contain;
+    flex-shrink: 0;
 }
 
 .demo-option-title {
-    font-size: 1.15rem;
+    font-size: 1.3rem;
     font-weight: 700;
 }
 
@@ -355,18 +363,54 @@ body:has(#welcome.active) .main {
     line-height: 1.5;
 }
 
+/* Branch connecting the heading to both cards */
+.demo-options::before,
+.demo-options::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.demo-options::before {
+    top: 0;
+    left: 50%;
+    height: 20px;
+    border-left: 2px solid var(--connector-color);
+    transform: translateX(-50%);
+}
+
+.demo-options::after {
+    top: 20px;
+    left: calc(25% - var(--card-gap) / 4);
+    right: calc(25% - var(--card-gap) / 4);
+    height: 20px;
+    border-top: 2px solid var(--connector-color);
+    border-left: 2px solid var(--connector-color);
+    border-right: 2px solid var(--connector-color);
+}
+
+/* Keyboard navigation */
+.welcome-login-btn:focus-visible,
+.welcome-signup-btn:focus-visible,
+.demo-option:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 4px;
+}
+
+/* Mobile layout */
 @media (max-width: 600px) {
     .welcome-header {
         align-items: flex-start;
     }
 
-    .welcome-brand {
-        max-width: 140px;
-        line-height: 1.4;
-    }
-
     .demo-options {
         grid-template-columns: 1fr;
+        padding-top: 0;
+    }
+
+    .demo-options::before,
+    .demo-options::after {
+        display: none;
     }
 }
 
