@@ -61,7 +61,6 @@ export default class AppController {
         this.setDomRefs();
         this.bindSideBarEvents();
         this.bindEvents();
-
         this.startDemo(null);
 
     }
@@ -77,11 +76,21 @@ export default class AppController {
     };
 
     bindEvents() {
+        this.bindWelcomeEvents();
         this.bindDashboardEvents();
         this.bindMachineryEvents();
         this.bindTelehutEvents();
         this.bindRemoteLevelEvents();
     };
+
+    bindWelcomeEvents() {
+        const demoUserBtn = document.getElementById('demo-user-btn');
+        const returnBtn = document.getElementById('return-to-welcome');
+        // const demoAdminBtn = document.getElementById('demo-admin-btn');
+
+        demoUserBtn.addEventListener('click', () => Ui.showPage("dashboard"));
+        returnBtn.addEventListener('click', () => Ui.showPage("welcome"));
+    }
 
     bindDashboardEvents() {
 
@@ -264,9 +273,11 @@ export default class AppController {
 
         const cancelAddMachineFormBtn = document.getElementById("cancel-add-machine-form-btn");
         cancelAddMachineFormBtn.addEventListener("click", () => {
-            Ui.closeForm(addMachineFormElement, openAddMachineFormBtn);
+            this.editMachineryId = null;
             addMachineBtn.textContent = "Add Machine";
             addMachineForm.reset();
+
+            Ui.closeForm(addMachineFormElement, openAddMachineFormBtn);
         })
 
         this.machineryTableBody.addEventListener("click", async e => {
@@ -297,7 +308,6 @@ export default class AppController {
             else if (button.dataset.action === "remove") {
                 try {
                     const machineryToDelete = this.machineryList.find(el => el.id.toString() === tr.dataset.id);
-                    // console.log(this.machineryList)
                     const deletedId = await EquipmentService.deleteMachinery(machineryToDelete.id);
                     this.machineryList = this.machineryList.filter(machine => machine.id !== deletedId);
                     this.render();
@@ -327,9 +337,10 @@ export default class AppController {
         });
 
         cancelBtn.addEventListener("click", () => {
-            addTelehutForm.reset()
+            this.editTelehutId = null;
+            addTelehutBtn.textContent = "Add Telehut";
             Ui.closeForm(addTelehutForm, addTelehutToFleetBtn);
-            addTelehutBtn.textContent = "Add Telehut"
+
         });
 
         addTelehutForm.addEventListener("submit", async e => {
@@ -469,8 +480,8 @@ export default class AppController {
         })
 
         cancelAddLevelFormBtn.addEventListener("click", () => {
+            this.editRemoteLevelId = null;
             addRemoteLevelBtn.textContent = "Save Remote Level";
-            addLevelForm.reset();
             Ui.closeForm(addLevelForm, openRemoteLevelFormBtn)
         })
 
