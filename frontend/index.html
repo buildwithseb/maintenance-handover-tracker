@@ -17,21 +17,16 @@
             <li data-page="machineries">Machineries</li>
             <li data-page="teleremote">Teleremote</li>
             <li data-page="handover">Handover Log</li>
-            <li data-page="login">Login</li>
-            <li data-page="sign-in">Sign up</li>
-            <button id="login-out-btn" type="button" class="nav-link">
-              Logout
-            </button>
           </ul>
         </nav>
         <div class="sidebar-footer">
-          <button type="button" class="return-button" id="return-to-welcome">
+          <button type="button" class="return-button" id="return-btn">
             <img
               class="return-icon"
               src="./assets/exit-icon.svg"
               alt="Button to return to Welcome page"
             />
-            <span>Log out</span>
+            <span>Return</span>
           </button>
         </div>
       </aside>
@@ -42,8 +37,16 @@
         <section id="welcome" class="page-section welcome-page active">
           <header class="welcome-header">
             <div class="welcome-auth">
-              <button class="welcome-login-btn" type="button">Log in</button>
-              <button class="welcome-signup-btn" type="button">Sign up</button>
+              <button class="welcome-login-btn" data-page="login" type="button">
+                Log in
+              </button>
+              <button
+                class="welcome-signup-btn"
+                data-page="sign-in"
+                type="button"
+              >
+                Sign up
+              </button>
             </div>
           </header>
 
@@ -55,21 +58,32 @@
             />
             <p class="welcome-eyebrow">Maintenance Handover Tracker</p>
             <h1>Welcome</h1>
-            <p class="welcome-copy">
-              Select an implementation
-            </p>
+            <p class="welcome-copy">Select an implementation</p>
 
             <div class="demo-options">
-              <button id="demo-user-btn" class="demo-option" type="button">
-                <img class="demo-option-icon"src="./assets/html-icon.svg" alt="HTLM icon">
+              <button
+                id="version1"
+                data-page="dashboard"
+                class="demo-option"
+                type="button"
+              >
+                <img
+                  class="demo-option-icon"
+                  src="./assets/html-icon.svg"
+                  alt="HTLM icon"
+                />
                 <span class="demo-option-title">Version 1</span>
                 <span>HTML + CSS</span>
                 <span>Vanilla JavaScript</span>
                 <span class="demo-option-description">DOM manipulation</span>
               </button>
 
-              <button id="demo-admin-btn" class="demo-option" type="button">
-                <img class="demo-option-icon"src="./assets/react-icon.svg" alt="React JS icon">
+              <button data-page="version2" class="demo-option" type="button">
+                <img
+                  class="demo-option-icon"
+                  src="./assets/react-icon.svg"
+                  alt="React JS icon"
+                />
                 <span class="demo-option-title">Version 2</span>
                 <span>React</span>
                 <span>TypeScript</span>

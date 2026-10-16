@@ -5,6 +5,7 @@ import EquipmentService from "../services/equipmentService.js";
 import LocalStorageService from "../services/localStorageService.js";
 import createDemoData from "../data/demoData.js";
 import appState from "../state/appState.js";
+import ApiService from "../services/apiService.js";
 
 export default class AppController {
     constructor() {
@@ -22,6 +23,7 @@ export default class AppController {
 
     async startDemo(role) {
 
+        (appState.mode === "demo") ? Ui.showButton("reset-data-btn") : Ui.hideButton("reset-data-btn")
         this.isSeeded = localStorage.getItem("dashboardSeeded") === 'true';
 
         if (appState.mode === "demo" && !this.isSeeded) {
@@ -41,6 +43,9 @@ export default class AppController {
     }
 
     async startAuthenticatedSession() {
+
+        (appState.mode === "demo") ? Ui.showButton("reset-data-btn") : Ui.hideButton("reset-data-btn")
+
         if (appState.mode === "api") {
             Ui.showLoading();
             try {
@@ -57,13 +62,10 @@ export default class AppController {
     }
 
     async init() {
-
-        await EquipmentService.getCsrf();
-        await this.refreshAuth();
-        this.setDomRefs();
-        this.bindSideBarEvents();
+        this.bindWelcomeEvents();
+        this.bindSignUpEvents();
+        this.bindLoginEvents();
         this.bindEvents();
-        this.startDemo(null);
 
     }
 
@@ -78,10 +80,8 @@ export default class AppController {
     };
 
     bindEvents() {
-        this.bindWelcomeEvents();
-
-        this.bindLoginEvents();
-        this.bindSignUpEvents();
+        this.setDomRefs();
+        this.bindSideBarEvents();
         this.bindLogout();
         this.bindDashboardEvents();
         this.bindMachineryEvents();
@@ -90,43 +90,57 @@ export default class AppController {
     };
 
     bindWelcomeEvents() {
-        const demoUserBtn = document.getElementById('demo-user-btn');
-        const returnBtn = document.getElementById('return-to-welcome');
-        // const demoAdminBtn = document.getElementById('demo-admin-btn');
+        const welcomeButtons = document.querySelectorAll('#welcome button')
+        welcomeButtons.forEach(button => {
+            button.addEventListener('click', () => {
 
-        demoUserBtn.addEventListener('click', () => Ui.showPage("dashboard"));
-        returnBtn.addEventListener('click', () => Ui.showPage("welcome"));
+                if (button.id === "version1") {
+                    appState.mode = "demo"
+                    this.startDemo()
+                }
+                Ui.showPage(button.dataset.page)
+            })
+
+        })
     }
 
     bindLoginEvents() {
+
         const form = document.getElementById('login-form');
         const returnBtn = document.getElementById('return-login-btn');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault()
+            appState.mode = null;
+
+            await EquipmentService.getCsrf();
+            await this.refreshAuth();
+
+
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             await EquipmentService.postWithCsrf(data, "auth/login");
             await EquipmentService.getCsrf();
             await this.refreshAuth();
-            this.render();
-            Ui.showPage("dashboard");
+            if (this.IS_LOGGED_IN) {
+                appState.mode = "api"
+                await this.startAuthenticatedSession()
 
-
+                Ui.showPage("dashboard");
+            } else if (!this.IS_LOGGED_IN) alert("User not logged in! try again");
         })
 
         returnBtn.addEventListener('click', () => {
-            Ui.showPage("dashboard")
+            Ui.showPage("welcome")
         });
     }
 
     bindSignUpEvents() {
+
         const form = document.getElementById('sign-form');
         const returnBtn = document.getElementById('return-sign-in-btn');
-        const loginLink = document.getElementById('login-link-btn');
 
-        returnBtn.addEventListener('click', () => { Ui.showPage("dashboard") });
-        loginLink.addEventListener('click', () => { Ui.showPage("login") });
+        returnBtn.addEventListener('click', () => { Ui.showPage("welcome") });
         form.addEventListener('submit', async (e) => {
             e.preventDefault()
             const formData = new FormData(form);
@@ -138,17 +152,20 @@ export default class AppController {
     }
 
     bindLogout() {
-        const logoutBtn = document.getElementById('login-out-btn');
+        const logoutBtn = document.getElementById('return-btn');
         const data = { user: "test" }
 
+
         logoutBtn.addEventListener('click', async () => {
-            const result = await EquipmentService.postWithCsrf(data, "auth/logout");
-            this.IS_LOGGED_IN = result.isLoggedIn;
-            await EquipmentService.getCsrf();
-            console.log(result);
-            await this.refreshAuth();
-            this.render();
-            Ui.showPage("dashboard");
+            if (this.IS_LOGGED_IN) {
+                const result = await EquipmentService.postWithCsrf(data, "auth/logout");
+                this.IS_LOGGED_IN = result.isLoggedIn;
+                await EquipmentService.getCsrf();
+                await this.refreshAuth();
+            }
+
+            appState.mode = null;
+            Ui.showPage("welcome");
         })
     }
 
@@ -163,11 +180,6 @@ export default class AppController {
         const addGeneralNoteBtn = document.querySelector("#general-note button");
         const noteInput = document.querySelector("#general-note input");
 
-        if (appState.mode === "demo") {
-
-            console.log("test")
-            Ui.showButton("reset-data-btn");
-        }
 
         resetDataBtn.addEventListener("click", () => {
             localStorage.clear();
@@ -586,7 +598,7 @@ export default class AppController {
     async refreshAuth() {
         const result = await ApiService.checkAuthStatus('auth/status');
         this.IS_LOGGED_IN = !!result.isLoggedIn;
-        console.log("refreshAuth:", this.IS_LOGGED_IN);
+        console.log("IS_LOGGED_IN:", this.IS_LOGGED_IN);
     }
 
 
