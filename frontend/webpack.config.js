@@ -18,8 +18,11 @@ module.exports = (env, argv) => {
     devServer: {
       static: {
         directory: path.resolve(__dirname),
+        watch: false,// disable auto relaod
       },
       open: true,
+      hot: false,// disable auto relaod
+      liveReload: false,// disable auto relaod
     },
 
     devtool: isProduction ? "source-map" : "eval-cheap-module-source-map",
