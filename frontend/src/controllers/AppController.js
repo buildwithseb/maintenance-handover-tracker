@@ -58,6 +58,8 @@ export default class AppController {
 
     async init() {
 
+        await EquipmentService.getCsrf();
+        await this.refreshAuth();
         this.setDomRefs();
         this.bindSideBarEvents();
         this.bindEvents();
@@ -77,6 +79,10 @@ export default class AppController {
 
     bindEvents() {
         this.bindWelcomeEvents();
+
+        this.bindLoginEvents();
+        this.bindSignUpEvents();
+        this.bindLogout();
         this.bindDashboardEvents();
         this.bindMachineryEvents();
         this.bindTelehutEvents();
@@ -92,6 +98,61 @@ export default class AppController {
         returnBtn.addEventListener('click', () => Ui.showPage("welcome"));
     }
 
+    bindLoginEvents() {
+        const form = document.getElementById('login-form');
+        const returnBtn = document.getElementById('return-login-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            await EquipmentService.postWithCsrf(data, "auth/login");
+            await EquipmentService.getCsrf();
+            await this.refreshAuth();
+            this.render();
+            Ui.showPage("dashboard");
+
+
+        })
+
+        returnBtn.addEventListener('click', () => {
+            Ui.showPage("dashboard")
+        });
+    }
+
+    bindSignUpEvents() {
+        const form = document.getElementById('sign-form');
+        const returnBtn = document.getElementById('return-sign-in-btn');
+        const loginLink = document.getElementById('login-link-btn');
+
+        returnBtn.addEventListener('click', () => { Ui.showPage("dashboard") });
+        loginLink.addEventListener('click', () => { Ui.showPage("login") });
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            await EquipmentService.postWithCsrf(data, "auth/sign-up");
+            await EquipmentService.getCsrf();
+            Ui.showPage("login")
+        })
+    }
+
+    bindLogout() {
+        const logoutBtn = document.getElementById('login-out-btn');
+        const data = { user: "test" }
+
+        logoutBtn.addEventListener('click', async () => {
+            const result = await EquipmentService.postWithCsrf(data, "auth/logout");
+            this.IS_LOGGED_IN = result.isLoggedIn;
+            await EquipmentService.getCsrf();
+            console.log(result);
+            await this.refreshAuth();
+            this.render();
+            Ui.showPage("dashboard");
+        })
+    }
+
+
     bindDashboardEvents() {
 
         this.generalNoteListElement = document.querySelector("#general-note ul");
@@ -103,6 +164,8 @@ export default class AppController {
         const noteInput = document.querySelector("#general-note input");
 
         if (appState.mode === "demo") {
+
+            console.log("test")
             Ui.showButton("reset-data-btn");
         }
 
@@ -263,6 +326,9 @@ export default class AppController {
                     machineNameInput, machineTypeInput, machineStatusInput, machineRemoteCapableInput, machineNoteInput),
                     "machinery");
 
+                if (newMachinery.message) {
+                    return console.log(newMachinery.message)
+                }
                 this.machineryList.push(newMachinery);
                 this.render();
             } catch (error) { console.error("Failed to load data:", error) };
@@ -332,7 +398,6 @@ export default class AppController {
         const addTelehutBtn = document.getElementById("save-telehut-btn");
 
         addTelehutToFleetBtn.addEventListener("click", () => {
-
             Ui.openForm(addTelehutForm, addTelehutToFleetBtn);
         });
 
@@ -518,16 +583,22 @@ export default class AppController {
     }
 
 
+    async refreshAuth() {
+        const result = await ApiService.checkAuthStatus('auth/status');
+        this.IS_LOGGED_IN = !!result.isLoggedIn;
+        console.log("refreshAuth:", this.IS_LOGGED_IN);
+    }
+
 
     render() {
         const machineAvailableList = this.machineryList.filter(mach => mach.status === MACHINERY_STATUS.AVAILABLE);
         const machineryBreakdownList = this.machineryList.filter(mach => mach.status === MACHINERY_STATUS.BREAKDOWN);
         const machineInProgressList = this.machineryList.filter(mach => mach.status === MACHINERY_STATUS.IN_PROGRESS);
         Ui.renderDashboard(this.machineryList, machineAvailableList, machineryBreakdownList, machineInProgressList);
-        Ui.renderMachineries(this.machineryList, this.machineryTableBody);
+        Ui.renderMachineries(this.machineryList, this.machineryTableBody, this.IS_LOGGED_IN);
         Ui.renderGeneralNotes(this.generalNoteList, this.generalNoteListElement);
         Ui.renderHandoverGeneralNote(this.generalNoteList);
-        Ui.renderTelehut(this.telehutList, this.telehutTableBody);
+        Ui.renderTelehut(this.telehutList, this.telehutTableBody, this.IS_LOGGED_IN);
 
         const remoteCapableMachineryList = this.machineryList.filter(mach => mach.remoteCapable);
         Ui.renderRemoteCapableMachinery(remoteCapableMachineryList);

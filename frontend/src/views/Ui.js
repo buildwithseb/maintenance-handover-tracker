@@ -48,8 +48,13 @@ export default class Ui {
 
     }
 
-    static renderMachineries(machineryList, machineryRootList) {
+    static renderMachineries(machineryList, machineryRootList, isLoggedIn) {
 
+        // if (!isLoggedIn) {
+        //     this.hideButton("add-machine-to-fleet-btn");
+        // } else {
+        //     this.showButton("add-machine-to-fleet-btn");
+        // };
         machineryRootList.replaceChildren();
 
         for (const machine of machineryList) {
@@ -65,7 +70,7 @@ export default class Ui {
                   <td data-field='notes'></td>
                   <td>
                      <button class="small-btn" data-action="edit" >Edit</button>
-                     <button class="small-btn danger-btn" data-action="remove" >Remove</button>
+                     <button id="machinery-delete-btn" class="small-btn danger-btn" data-action="remove" >Remove</button>
                   </td>
         `
             newMachineryEl.querySelector("[data-field='name']").textContent = machine.name ?? '';
@@ -75,6 +80,13 @@ export default class Ui {
             statusBadge.classList.add(this.getBadgeClassColor(machine.status));
             newMachineryEl.querySelector("[data-field='notes']").textContent = machine.notes ?? "";
 
+            // const deleteBtn = newMachineryEl.querySelector('button:last-of-type');
+            // if (!!isLoggedIn) {
+            //     deleteBtn.classList.remove('inactive');
+            // } else {
+            //     deleteBtn.classList.add('inactive');
+            // }
+
             machineryRootList.appendChild(newMachineryEl);
 
         }
@@ -82,8 +94,13 @@ export default class Ui {
 
 
 
-    static renderTelehut(telehutList, telehutTableBody) {
+    static renderTelehut(telehutList, telehutTableBody, isLoggedIn) {
 
+        // if (!isLoggedIn) {
+        //     this.hideButton("add-telehut-to-fleet-btn");
+        // } else {
+        //     this.showButton("add-telehut-to-fleet-btn");
+        // };
 
         telehutTableBody.replaceChildren();
 
@@ -106,6 +123,12 @@ export default class Ui {
             const statusBadge = newTelehutEl.querySelector("[data-field='status']");
             statusBadge.classList.add(this.getBadgeClassColor(telehut.status));
             statusBadge.textContent = STATUS_LABELS[telehut.status] ?? "Unknown";
+
+            // if (!isLoggedIn) {
+            //     const deleteBtn = newTelehutEl.querySelector('button:last-of-type');
+            //     deleteBtn.classList.add('inactive');
+            // }
+
             telehutTableBody.appendChild(newTelehutEl);
         }
     }
@@ -213,11 +236,17 @@ export default class Ui {
 
     static showPage(elementId) {
 
+        const sideBarEl = document.getElementById("sidebar");
+        sideBarEl.classList.remove('inactive');
         const pages = document.querySelectorAll(".page-section");
         pages.forEach(page => {
             page.classList.remove("active")
         });
         document.getElementById(elementId).classList.add("active");
+
+        if (elementId === "login" || elementId === "sign-in") {
+            sideBarEl.classList.add('inactive');
+        }
     }
 
 
@@ -237,6 +266,11 @@ export default class Ui {
     static showButton(buttonId) {
         const button = document.getElementById(`${buttonId}`)
         button.classList.remove("inactive");
+    }
+
+    static hideButton(buttonId) {
+        const button = document.getElementById(`${buttonId}`)
+        button.classList.add("inactive");
     }
 
 }
