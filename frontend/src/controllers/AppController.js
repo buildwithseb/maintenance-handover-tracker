@@ -200,21 +200,29 @@ export default class AppController {
     }
 
     bindLogout() {
-        const logoutBtn = document.getElementById('return-btn');
-        const data = { user: "test" }
+        const button = document.getElementById('return-btn');
 
+        button.addEventListener('click', async () => {
+            if (button.disabled) return
+            button.disabled = true;
 
-        logoutBtn.addEventListener('click', async () => {
-            if (this.IS_LOGGED_IN) {
-                const result = await EquipmentService.postWithCsrf(data, "auth/logout");
-                this.IS_LOGGED_IN = result.isLoggedIn;
-                await EquipmentService.getCsrf();
-                await this.refreshAuth();
+            try {
+                if (this.IS_LOGGED_IN) {
+                    await EquipmentService.postWithCsrf({}, "auth/logout");
+                }
+                window.location.reload();
+
+            } catch (error) {
+                console.error(error);
+                alert("Unable to log out. Please try again.");
+                button.disabled = false;
             }
 
-            appState.mode = null;
-            Ui.showPage("welcome");
+
         })
+
+
+
     }
 
 
