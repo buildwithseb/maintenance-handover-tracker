@@ -43,21 +43,24 @@ export default class AppController {
     }
 
     async startAuthenticatedSession() {
+        if (appState.mode !== "api") {
+            throw new Error("API mode is not active")
+        }
 
-        (appState.mode === "demo") ? Ui.showButton("reset-data-btn") : Ui.hideButton("reset-data-btn")
+        Ui.hideButton("reset-data-btn");
 
-        if (appState.mode === "api") {
-            Ui.showLoading();
-            try {
-                const freshData = await EquipmentService.fetchLists();
-                this.setLists(freshData);
-            } catch (error) {
-                console.error("Failed to load data:", error);
-            } finally {
-                Ui.hideLoading();
-            }
+        // Remove any demo or previous-session data first.
+        this.setLists();
+        this.render();
+
+        Ui.showLoading();
+
+        try {
+            const freshData = await EquipmentService.fetchLists();
+            this.setLists(freshData);
             this.render();
-            return;
+        } finally {
+            Ui.hideLoading();
         }
     }
 
