@@ -285,12 +285,23 @@ export default class AppController {
 
             if (this.editGeneralNoteId) {
                 try {
-                    const updatedGeneralNote = this.generalNoteList.find(el => el.id.toString() === this.editGeneralNoteId);
-                    updatedGeneralNote.text = textInput;
+                    const currentNote = this.generalNoteList.find(note => note.id.toString() === this.editGeneralNoteId);
+                
+                    if (!currentNote) {
+                        alert("This note is no longer available.");
+                        return;
+                    }
+                    
+                    const updatedGeneralNote = {...currentNote , text : textInput};
+
                     const updatedNote = await EquipmentService.updateGeneralNote(updatedGeneralNote, updatedGeneralNote.id);
                     this.generalNoteList = this.generalNoteList.map(note => note.id === updatedNote.id ? updatedNote : note);
                     this.render();
-                } catch (err) { console.error("Failed to update data:", err) };
+                } catch (error) {
+                    console.error(error);
+                    alert("The change could not be saved. Your input has been kept.");
+                    return;
+                };
 
                 noteInput.value = "";
                 this.editGeneralNoteId = null;
@@ -330,7 +341,11 @@ export default class AppController {
                     const noteToDelete = this.generalNoteList.find(el => el.id.toString() === li.dataset.id);
                     const deletedId = await EquipmentService.deleteGeneralNote(noteToDelete.id);
                     this.generalNoteList = this.generalNoteList.filter(note => note.id !== deletedId);
-                } catch (error) { console.error("Failed to delete data:", error) }
+                } catch (error) {
+                    console.error(error);
+                    alert("The item could not be removed. Please try again.");
+                    return;
+                }
 
                 this.editGeneralNoteId = null;
                 noteInput.value = "";
@@ -370,7 +385,11 @@ export default class AppController {
                     const savedMachinery = await EquipmentService.updateMachinery(updatedMachinery, updatedMachinery.id);
                     this.machineryList = this.machineryList.map(machine => machine.id === savedMachinery.id ? savedMachinery : machine);
                     this.render();
-                } catch (error) { console.error("Failed to load data:", error) };
+                } catch (error) {
+                    console.error(error);
+                    alert("The change could not be saved. Your input has been kept.");
+                    return;
+                };
 
                 Ui.closeForm(addMachineFormElement, openAddMachineFormBtn);
                 addMachineForm.reset();
@@ -444,7 +463,11 @@ export default class AppController {
                     const deletedId = await EquipmentService.deleteMachinery(machineryToDelete.id);
                     this.machineryList = this.machineryList.filter(machine => machine.id !== deletedId);
                     this.render();
-                } catch (error) { console.error("Failed to load data:", error) };
+                } catch (error) {
+                    console.error(error);
+                    alert("The item could not be removed. Please try again.");
+                    return;
+                }
 
                 this.editMachineryId = null;
                 addMachineForm.reset();
@@ -493,7 +516,11 @@ export default class AppController {
                     const savedTelehut = await EquipmentService.updateTelehut(updatedTelehut, updatedTelehut.id)
                     this.telehutList = this.telehutList.map(telehut => telehut.id === savedTelehut.id ? savedTelehut : telehut);
                     this.render();
-                } catch (error) { console.error("Failed to load data:", error) };
+                } catch (error) {
+                    console.error(error);
+                    alert("The change could not be saved. Your input has been kept.");
+                    return;
+                };
 
                 this.editTelehutId = null;
                 addTelehutForm.reset();
@@ -543,7 +570,11 @@ export default class AppController {
                     const deletedId = await EquipmentService.deleteTelehut(telehutToDelete.id);
                     this.telehutList = this.telehutList.filter(telehut => telehut.id !== deletedId);
                     this.render();
-                } catch (error) { console.log("Failed to load data:", error) };
+                } catch (error) {
+                    console.error(error);
+                    alert("The item could not be removed. Please try again.");
+                    return;
+                }
 
                 this.editTelehutId = null;
                 addTelehutForm.reset();
@@ -586,7 +617,11 @@ export default class AppController {
                     const savedRemoteLevel = await EquipmentService.updateRemoteLevel(updatedRemoteLevel, updatedRemoteLevel.id);
                     this.remoteLevelList = this.remoteLevelList.map(remoteLevel => remoteLevel.id === savedRemoteLevel.id ? savedRemoteLevel : remoteLevel);
                     this.render();
-                } catch (error) { console.log("Failed to load data:", error) };
+                } catch (error) {
+                    console.error(error);
+                    alert("The change could not be saved. Your input has been kept.");
+                    return;
+                };
 
                 this.editRemoteLevelId = null;
                 addLevelForm.reset();
@@ -639,7 +674,11 @@ export default class AppController {
                     const deletedId = await EquipmentService.deleteRemoteLevel(remoteLevelToDelete.id);
                     this.remoteLevelList = this.remoteLevelList.filter(level => level.id !== deletedId);
                     this.render();
-                } catch (error) { console.log("Failed to load data:", error) };
+                } catch (error) {
+                    console.error(error);
+                    alert("The item could not be removed. Please try again.");
+                    return;
+                }
                 this.editRemoteLevelId = null;
                 addLevelForm.reset();
                 Ui.closeForm(addLevelForm, openRemoteLevelFormBtn);
