@@ -107,47 +107,92 @@ export default class AppController {
     bindLoginEvents() {
 
         const form = document.getElementById('login-form');
-        const returnBtn = document.getElementById('return-login-btn');
+        const submitBtn = form.querySelector('[type="submit"]');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault()
-            appState.mode = null;
-
-            await EquipmentService.getCsrf();
-            await this.refreshAuth();
+        document.getElementById("return-login-btn").
+            addEventListener('click', () => Ui.showPage('welcome'));
 
 
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            await EquipmentService.postWithCsrf(data, "auth/login");
-            await EquipmentService.getCsrf();
-            await this.refreshAuth();
-            if (this.IS_LOGGED_IN) {
-                appState.mode = "api"
-                await this.startAuthenticatedSession()
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
 
+            if (submitBtn.disabled) return;
+
+            submitBtn.disabled = true;
+
+            try {
+                const data = Object.fromEntries(new FormData(form));
+
+                await EquipmentService.postWithCsrf(data, "auth/login");
+                await EquipmentService.getCsrf();
+                await this.refreshAuth();
+
+                if (!this.IS_LOGGED_IN)
+                    throw new Error("Login could not be confirmed");
+
+                appState.mode = "api";
+                await this.startAuthenticatedSession();
+
+                form.reset();
                 Ui.showPage("dashboard");
-            } else if (!this.IS_LOGGED_IN) alert("User not logged in! try again");
+            } catch (error) {
+
+                appState.mode = null;
+                console.log(error)
+                alert(error.message || "Unable to log in. Please try again.")
+
+            } finally {
+                submitBtn.disabled = false;
+            }
+
         })
 
-        returnBtn.addEventListener('click', () => {
-            Ui.showPage("welcome")
-        });
+
     }
 
     bindSignUpEvents() {
 
         const form = document.getElementById('sign-form');
-        const returnBtn = document.getElementById('return-sign-in-btn');
+        const submitBtn = form.querySelector('[type="submit"]');
 
-        returnBtn.addEventListener('click', () => { Ui.showPage("welcome") });
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault()
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            await EquipmentService.postWithCsrf(data, "auth/sign-up");
-            await EquipmentService.getCsrf();
-            Ui.showPage("login")
+        document.getElementById('return-sign-in-btn').
+            addEventListener('click', () => {
+                Ui.showPage("welcome")
+            });;
+
+        document.getElementById("login-link-btn").
+            addEventListener('click', () => {
+                Ui.showPage("login")
+            })
+
+
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+
+            if (submitBtn.disabled) return;
+
+            const data = Object.fromEntries(new FormData(form));
+
+            if (data.password !== data.confirmPassword) {
+                alert("Passwords must match.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+
+            try {
+                await EquipmentService.postWithCsrf(data, "auth/sign-up");
+
+                form.reset();
+                Ui.showPage("login");
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "Unable to sign up. Please try again.");
+
+            } finally {
+                submitBtn.disabled = false;
+            }
+
         })
     }
 
@@ -233,7 +278,6 @@ export default class AppController {
                     updatedGeneralNote.text = textInput;
                     const updatedNote = await EquipmentService.updateGeneralNote(updatedGeneralNote, updatedGeneralNote.id);
                     this.generalNoteList = this.generalNoteList.map(note => note.id === updatedNote.id ? updatedNote : note);
-
                     this.render();
                 } catch (err) { console.error("Failed to update data:", err) };
 
