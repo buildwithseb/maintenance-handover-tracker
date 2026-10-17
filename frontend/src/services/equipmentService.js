@@ -23,6 +23,7 @@ export default class EquipmentService {
     }
 
     static async postWithCsrf(data, path) {
+        await this.getCsrf();
         return await ApiService.postData(data, path, this.CSRF_TOKEN);
     }
 
@@ -83,7 +84,7 @@ export default class EquipmentService {
 
     }
 
-    static async addGeneralNote(data, path) {
+    static addGeneralNote(data, path) {
         if (appState.mode === "api") {
             return ApiService.postData(data, path, this.CSRF_TOKEN);
         }
