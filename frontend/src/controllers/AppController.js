@@ -65,6 +65,7 @@ export default class AppController {
     }
 
     async init() {
+        Ui.showPage("welcome");
         this.bindWelcomeEvents();
         this.bindSignUpEvents();
         this.bindLoginEvents();
@@ -291,7 +292,7 @@ export default class AppController {
                         alert("This note is no longer available.");
                         return;
                     }
-                    
+
                     const updatedGeneralNote = {...currentNote , text : textInput};
 
                     const updatedNote = await EquipmentService.updateGeneralNote(updatedGeneralNote, updatedGeneralNote.id);

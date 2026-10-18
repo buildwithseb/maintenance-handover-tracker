@@ -236,17 +236,26 @@ export default class Ui {
 
     static showPage(elementId) {
 
-        const sideBarEl = document.getElementById("sidebar");
-        sideBarEl.classList.remove('inactive');
-        const pages = document.querySelectorAll(".page-section");
-        pages.forEach(page => {
-            page.classList.remove("active")
-        });
-        document.getElementById(elementId).classList.add("active");
+        const target = document.getElementById(elementId);
 
-        if (elementId === "login" || elementId === "sign-in") {
-            sideBarEl.classList.add('inactive');
+        if (!target?.classList.contains("page-section")) {
+            console.warn(`Page does not exist: ${elementId}`);
+            return;
         }
+
+        document.querySelectorAll(".page-section").forEach(page => {
+            page.classList.toggle("active", page === target);
+        });
+
+
+        const hideSidebar = ["welcome",
+            "login",
+            "sign-in"].includes(elementId);
+
+        document.getElementById("sidebar")
+            .classList.toggle("inactive", hideSidebar);
+
+
     }
 
 
