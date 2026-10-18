@@ -16,6 +16,7 @@ module.exports = (env, argv) => {
     },
 
     devServer: {
+      port: 8081,
       static: {
         directory: path.resolve(__dirname),
         watch: false,// disable auto relaod
@@ -34,7 +35,8 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           { from: "index.html", to: "index.html" },
-          { from: "styles.css", to: "styles.css", noErrorOnMissing: true }
+          { from: "styles.css", to: "styles.css", noErrorOnMissing: true },
+          { from: "assets", to: "assets" }
         ],
       }),
     ],
