@@ -239,7 +239,14 @@ export default class AppController {
 
 
         resetDataBtn.addEventListener("click", () => {
-            localStorage.clear();
+            [
+                "machineryList",
+                "telehutList",
+                "remoteLevelList",
+                "generalNoteList",
+                "dashboardSeeded"
+            ].forEach(key => localStorage.removeItem(key));
+            
             const demoData = createDemoData();
             LocalStorageService.set(demoData);
             this.setLists(demoData);
@@ -287,13 +294,13 @@ export default class AppController {
             if (this.editGeneralNoteId) {
                 try {
                     const currentNote = this.generalNoteList.find(note => note.id.toString() === this.editGeneralNoteId);
-                
+
                     if (!currentNote) {
                         alert("This note is no longer available.");
                         return;
                     }
 
-                    const updatedGeneralNote = {...currentNote , text : textInput};
+                    const updatedGeneralNote = { ...currentNote, text: textInput };
 
                     const updatedNote = await EquipmentService.updateGeneralNote(updatedGeneralNote, updatedGeneralNote.id);
                     this.generalNoteList = this.generalNoteList.map(note => note.id === updatedNote.id ? updatedNote : note);
