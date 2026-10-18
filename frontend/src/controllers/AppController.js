@@ -127,7 +127,12 @@ export default class AppController {
             try {
                 const data = Object.fromEntries(new FormData(form));
 
-                await EquipmentService.postWithCsrf(data, "auth/login");
+                const loginResult = await EquipmentService.postWithCsrf(data, "auth/login");
+                if (loginResult?.isLoggedIn !== true) {
+                    throw new Error(
+                        loginResult?.message || "Invalid email or password"
+                    );
+                }
                 await EquipmentService.getCsrf();
                 await this.refreshAuth();
 
@@ -246,7 +251,7 @@ export default class AppController {
                 "generalNoteList",
                 "dashboardSeeded"
             ].forEach(key => localStorage.removeItem(key));
-            
+
             const demoData = createDemoData();
             LocalStorageService.set(demoData);
             this.setLists(demoData);
