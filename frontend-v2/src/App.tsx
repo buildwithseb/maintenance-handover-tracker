@@ -1,21 +1,23 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BrowserRouter, Routes, Route } from "react-router";
+import Dashboard from "./pages/Dashboard";
+import Equipment from "./pages/Equipment";
+import { AppLayout } from "./components/layout/AppLayout";
+import Teleremote from "./pages/Teleremote";
+import Handover from "./pages/Handover";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <Card className="max-w-md">
-        <CardHeader>
-          <CardTitle>Maintenance Handover Tracker V2</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <p className="mb-4">React + TypeScript + Tailwind CSS</p>
-          <Button>Get Started</Button>
-        </CardContent>
-      </Card>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/equipment" element={<Equipment />} />
+          <Route path="/teleremote" element={<Teleremote />} />
+          <Route path="/handover" element={<Handover />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
